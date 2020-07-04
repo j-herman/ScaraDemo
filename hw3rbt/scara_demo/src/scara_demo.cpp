@@ -14,7 +14,10 @@
 
  #include "scara_demo.h"
 
-
+// Random path generator of length num_nodes.  Returns the path.
+// Much careful type conversion is needed to manage the transition from random
+// integers to ROS message types.  The workspace estimate is rough and would
+// need to be refined before using this code for anything more than a demo.
 std::vector<geometry_msgs::Point> create_path(int num_nodes)
 {
     std::vector<geometry_msgs::Point> path;
@@ -63,7 +66,8 @@ std::vector<fwd_kinematics::Joints> inv_kinematics(ros::NodeHandle nh, std::vect
     return j_path;
 }
 
-
+// Loops for up to ten seconds, checking to see if all joints have reached their goal positions and exiting
+// with success or timeout.
 void move_scara(ros::ServiceClient client, std::vector<fwd_kinematics::Joints>::iterator it, ros::Publisher j1_pub, ros::Publisher j2_pub, ros::Publisher j3_pub)
 {
     ros::Rate rate(1);
@@ -82,7 +86,8 @@ void move_scara(ros::ServiceClient client, std::vector<fwd_kinematics::Joints>::
     bool done_2 = false;
     bool done_3 = false;
     int i = 0;
-    // Check to see if all three joints are at their goal positions
+    // Call gazebo joint state service and compare to desired value to see if all three joints are
+    // at their goal positions
     while (!(done_1 && done_2 && done_3)) {
         j1_pub.publish(q1_temp);
         j2_pub.publish(q2_temp);
@@ -108,6 +113,7 @@ void move_scara(ros::ServiceClient client, std::vector<fwd_kinematics::Joints>::
         // Check 10 times, for a maximum of 10 seconds per position
         rate.sleep();
         if (i++ == 9) {
+            // Report failure
             done_1 = true;
             done_2 = true;
             done_3 = true;
@@ -115,6 +121,7 @@ void move_scara(ros::ServiceClient client, std::vector<fwd_kinematics::Joints>::
         }
     }
 }
+
 // The main function: create the ROS node, set up publishers and service clients, and initiate the
 // path-following sequence
 int main(int argc, char *argv[])
@@ -145,6 +152,7 @@ int main(int argc, char *argv[])
 
     gazebo_msgs::GetLinkState srv;
     srv.request.reference_frame = "SCARA::base_link";
+
     // Iterate through generated path, moving robot and generating position observations for comparison
     for (it2 = j_path.begin(); it2 < j_path.end(); it2++) {
         SPoint pos(*it++);
@@ -162,14 +170,10 @@ int main(int argc, char *argv[])
         rate.sleep();
     }
 
-
     // Spin to keep node information up for troubleshooting; Ctrl-C to quit
-
     while(ros::ok())
     {
         ros::spin();
     }
-  // check gazebo pose to make sure the positions line up  with what was printed
-
     return 0;
 }
