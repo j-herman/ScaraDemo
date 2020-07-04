@@ -8,6 +8,12 @@ from std_msgs.msg import String
 from fwd_kinematics.msg import *
 from fwd_kinematics.srv import *
 
+## This file creates a service to calculate forward kinematics for the
+## Scara robot, given a set of joint values.
+## To initiate from the command line: rosrun fwd_kinematics kinematicsServer.py
+## To call the service:
+## rosservice call /forward_kinematics "inputJoints: qOne: 0.0 qTwo: 0.0 qThree: 0.0" 
+
 def handle_kinematics(data):
     print("Calculating forward kinematics for:")
     print(data.inputJoints.qOne, data.inputJoints.qTwo, data.inputJoints.qThree)
