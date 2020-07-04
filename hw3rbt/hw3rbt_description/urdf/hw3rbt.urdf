@@ -1,0 +1,191 @@
+<?xml version="1.0"?>
+<robot name="SCARA">
+
+  <gazebo>
+    <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+      <robotNamespace>/SCARA</robotNamespace>
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    </plugin>
+  </gazebo>
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder length="0.2" radius="1.8"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.2" radius="1.8"/>
+      </geometry>
+    </collision>
+     <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="100"/>
+      <inertia
+        ixx="1.0" ixy="0.0" ixz="0.0"
+        iyy="1.0" iyz="0.0"
+        izz="1.0"/>
+    </inertial>
+  </link>
+
+  <link name="link_one">
+    <visual>
+      <geometry>
+        <cylinder length="2.3" radius=".05"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 1.1"/>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="2.3" radius=".05"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 1.1"/>
+    </collision>
+     <inertial>
+      <origin xyz="0 0 1" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia
+        ixx="1.0" ixy="0.0" ixz="0.0"
+        iyy="1.0" iyz="0.0"
+        izz="1.0"/>
+    </inertial>
+  </link>
+
+  <joint name="base_to_link_one" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="-5" upper="5" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="link_one"/>
+    <hardwareInterface>EffortJointInterface</hardwareInterface>
+  </joint>
+
+
+  <link name="link_one_arm">
+    <visual>
+      <geometry>
+        <cylinder length=".5" radius=".05"/>
+      </geometry>
+      <origin rpy="0 1.5708 0" xyz="0.25 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length=".5" radius=".05"/>
+      </geometry>
+      <origin rpy="0 1.5708 0" xyz="0.25 0 0"/>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0.25" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia
+        ixx="1.0" ixy="0.0" ixz="0.0"
+        iyy="1.0" iyz="0.0"
+        izz="1.0"/>
+    </inertial>
+  </link>
+
+  <joint name="link_one_ell" type="fixed">
+    <parent link="link_one"/>
+    <child link="link_one_arm"/>
+    <origin xyz="0 0 2.0"/>
+  </joint>
+
+  <link name="link_two">
+    <visual>
+      <geometry>
+        <cylinder length="1" radius=".05"/>
+      </geometry>
+      <origin rpy="0 1.5708 0" xyz="0.5 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="1" radius=".05"/>
+      </geometry>
+      <origin rpy="0 1.5708 0" xyz="0.5 0 0"/>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0.5" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia
+        ixx="1.0" ixy="0.0" ixz="0.0"
+        iyy="1.0" iyz="0.0"
+        izz="1.0"/>
+    </inertial>
+  </link>
+
+  <joint name="link_one_to_link_two" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="-3.1415" upper="3.1415" velocity="0.5"/>
+    <origin rpy="0 0 0" xyz="0.5 0 0"/>
+    <parent link="link_one_arm"/>
+    <child link="link_two"/>
+    <hardwareInterface>EffortJointInterface</hardwareInterface>
+  </joint>
+
+  <link name="link_three">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.2"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.1 0.1 0.2"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 .1" rpy="0 0 0"/>
+      <mass value="0.1"/>
+      <inertia
+        ixx="1.0" ixy="0.0" ixz="0.0"
+        iyy="1.0" iyz="0.0"
+        izz="1.0"/>
+    </inertial>
+  </link>
+
+  <joint name="link_two_to_link_three" type="prismatic">
+    <axis xyz ="0 0 1"/>
+    <parent link="link_two"/>
+    <child link="link_three"/>
+    <limit effort="1000.0" lower="-1.5" upper="0" velocity="0.5"/>
+    <origin rpy="0 0 3.1415" xyz="1 0 0"/>
+    <hardwareInterface>EffortJointInterface</hardwareInterface>
+  </joint>
+
+  <transmission name="tran1">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="base_to_link_one">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor1">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="tran2">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="link_one_to_link_two">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor2">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="tran3">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="link_two_to_link_three">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor3">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+</robot>

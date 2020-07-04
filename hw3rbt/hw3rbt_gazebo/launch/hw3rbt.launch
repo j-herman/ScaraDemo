@@ -1,0 +1,19 @@
+<launch>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find hw3rbt_gazebo)/worlds/hw3rbt.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="recording" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-file 
+     $(find hw3rbt_description)/urdf/hw3rbt.urdf -urdf -z 1 -model SCARA" />
+
+  <node name="inv_kin" pkg="fwd_kinematics" type="inverseKinematics.py" output="screen" />
+  
+  <include file="$(find hw3rbt_control)/launch/hw3robot_control.launch">
+  </include>
+
+</launch>

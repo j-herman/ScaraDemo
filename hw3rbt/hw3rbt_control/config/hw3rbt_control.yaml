@@ -1,0 +1,18 @@
+SCARA:
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50  
+  joint1_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: base_to_link_one
+    pid: {p: 100.0, i: 0.05, d: 30.0}
+
+  joint2_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: link_one_to_link_two
+    pid: {p: 200.0, i: 0.1, d: 30.0}
+
+  joint3_position_controller:
+    type: effort_controllers/JointPositionController
+    joint: link_two_to_link_three
+    pid: {p: 1000.0, i: 0.1, d: 10.0}

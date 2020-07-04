@@ -1,0 +1,13 @@
+<launch>
+
+  <arg name="a" default="0.1" />
+  <arg name="b" default="0.2" />
+  <arg name="c" default="0"   />
+
+  <node name="fwd_kin" pkg="fwd_kinematics" type="kinematicsServer.py" output="screen" />
+
+  <node name="inv_kin" pkg="fwd_kinematics" type="inverseKinematics.py" output="screen" />
+
+  <node name="kin_test" pkg="fwd_kinematics" type="kinematicsTest.py" output="screen" args="$(arg a) $(arg b) $(arg c)" />
+
+</launch>
