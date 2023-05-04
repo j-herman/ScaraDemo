@@ -112,7 +112,7 @@ list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
+  INCLUDE_DIRS 
   LIBRARIES scara_demo  
   CATKIN_DEPENDS roscpp rospy std_msgs sensor_msgs fwd_kinematics s_point
 #  DEPENDS system_lib
